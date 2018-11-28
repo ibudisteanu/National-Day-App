@@ -31,7 +31,7 @@ export default class HomeScreen extends React.Component {
                 <Image
                     style={ styles.image }
                     width={Dimensions.get('window').width} // height will be calculated automatically
-                    source={require('./../../res/ribbon.png')}
+                    source={require('./../../res/ribbon_2.png')}
                 />
 
 

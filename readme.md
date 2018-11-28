@@ -44,14 +44,18 @@ Use Android Studio to open the AVD emulator
 
 
 
-# Tutorial for Android Play Store
+# Tutorial for publish it on Android Play Store
 
-
-https://facebook.github.io/react-native/docs/signed-apk-android
+    https://facebook.github.io/react-native/docs/signed-apk-android
 
 optionally this
  
-https://android.jlelse.eu/preparing-a-reach-native-android-app-for-production-f063413d5633
+    https://android.jlelse.eu/preparing-a-reach-native-android-app-for-production-f063413d5633
+    
+to build it again
+
+    $ cd android
+    $  ./gradlew assembleRelease      
 
 
 
