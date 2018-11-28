@@ -45,12 +45,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.romania100.competitionapp",
+    package = "com.romania100.ziuanationala",
 )
 
 android_resource(
     name = "res",
-    package = "com.romania100.competitionapp",
+    package = "com.romania100.ziuanationala",
     res = "src/main/res",
 )
 

@@ -1,4 +1,4 @@
-package com.romania100.competitionapp;
+package com.romania100.ziuanationala;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "ConcursZiuaNationala";
+        return "ZiuaNationalaaRomaniei";
     }
 }

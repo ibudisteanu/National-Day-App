@@ -1,4 +1,4 @@
-package com.romania100.competitionapp;
+package com.romania100.ziuanationala;
 
 import android.app.Application;
 
