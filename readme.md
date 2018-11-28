@@ -54,7 +54,4 @@ optionally this
 https://android.jlelse.eu/preparing-a-reach-native-android-app-for-production-f063413d5633
 
 
-# React Native Push Notifications 
-
-https://www.pubnub.com/blog/react-native-push-notifications-ios-android/
 
