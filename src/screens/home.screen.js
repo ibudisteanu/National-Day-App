@@ -3,6 +3,7 @@ import { Alert, Platform, StyleSheet, Text, View, Button, Dimensions, AsyncStora
 import { Header } from 'react-native-elements';
 
 import firebase from 'react-native-firebase';
+import type { Notification, NotificationOpen } from 'react-native-firebase';
 
 import Image from 'react-native-scalable-image';
 
@@ -10,12 +11,22 @@ import Layout from "./../layout";
 
 export default class HomeScreen extends React.Component {
 
+
+    constructor(props) {
+
+        super(props);
+        this.state = {
+            status: '',
+        };
+
+    }
+
   static navigationOptions = {
-  headerTitle: 'Pagina Principală',
-  headerTintColor: '#ffe500',
-  headerStyle: {
-      backgroundColor: '#002d72'
-  }
+      headerTitle: 'Pagina Principală',
+      headerTintColor: '#ffe500',
+      headerStyle: {
+          backgroundColor: '#002d72'
+      }
   };
 
   render() {
@@ -27,6 +38,8 @@ export default class HomeScreen extends React.Component {
 
             <View style={ styles.textView } >
 
+
+                <Text>{this.state.status}</Text>
 
                 <Image
                     style={ styles.image }
@@ -41,6 +54,82 @@ export default class HomeScreen extends React.Component {
     );
 
   }
+
+    // async componentDidMount() {
+    //
+    //     this.setState({status: "Started"});
+    //
+    //     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
+    //
+    //     this.setState({status: "Started Notification"});
+    //
+    //     if (notificationOpen) {
+    //         const action = notificationOpen.action;
+    //         const notification: Notification = notificationOpen.notification;
+    //         var seen = [];
+    //         alert(JSON.stringify(notification.data, function(key, val) {
+    //             if (val != null && typeof val == "object") {
+    //                 if (seen.indexOf(val) >= 0) {
+    //                     return;
+    //                 }
+    //                 seen.push(val);
+    //             }
+    //             return val;
+    //         }));
+    //     }
+    //
+    //     this.setState({status: "Notification Open " + notificationOpen.toString() });
+    //
+    //     const channel = new firebase.notifications.Android.Channel('test-channel', 'Test Channel', firebase.notifications.Android.Importance.Max)
+    //         .setDescription('My apps test channel');
+    //
+    //     this.setState({status: "Creating Channel"});
+    //
+    //     // Create the channel
+    //     firebase.notifications().android.createChannel(channel);
+    //     this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
+    //         // Process your notification as required
+    //         // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+    //     });
+    //
+    //     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+    //         // Process your notification as required
+    //         notification
+    //             .android.setChannelId('test-channel')
+    //             .android.setSmallIcon('ic_launcher');
+    //         firebase.notifications()
+    //             .displayNotification(notification);
+    //
+    //     });
+    //
+    //     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+    //         // Get the action triggered by the notification being opened
+    //         const action = notificationOpen.action;
+    //         // Get information about the notification that was opened
+    //         const notification: Notification = notificationOpen.notification;
+    //         var seen = [];
+    //         alert(JSON.stringify(notification.data, function(key, val) {
+    //             if (val != null && typeof val == "object") {
+    //                 if (seen.indexOf(val) >= 0) {
+    //                     return;
+    //                 }
+    //                 seen.push(val);
+    //             }
+    //             return val;
+    //         }));
+    //         firebase.notifications().removeDeliveredNotification(notification.notificationId);
+    //
+    //     });
+    //
+    // }
+    //
+    // //Remove listeners allocated in createNotificationListeners()
+    // componentWillUnmount() {
+    //     this.notificationDisplayedListener();
+    //     this.notificationListener();
+    //     this.notificationOpenedListener();
+    // }
+
 
     async componentDidMount() {
         this.checkPermission();
@@ -88,11 +177,22 @@ export default class HomeScreen extends React.Component {
     }
 
 
-    async createNotificationListeners() {
+    async createNotificationListeners(){
+
         /*
         * Triggered when a particular notification has been received in foreground
         * */
+
         this.notificationListener = firebase.notifications().onNotification((notification) => {
+            // Process your notification as required
+            notification
+                .android.setChannelId('test-channel')
+                .android.setSmallIcon('ic_launcher')
+                .android.setPriority(firebase.notifications.Android.Priority.Max)
+                .setSound('default');
+            firebase.notifications()
+                .displayNotification(notification);
+
             const { title, body } = notification;
             this.showAlert(title, body);
         });
@@ -113,6 +213,18 @@ export default class HomeScreen extends React.Component {
             const { title, body } = notificationOpen.notification;
             this.showAlert(title, body);
         }
+
+        const channel = new firebase.notifications.Android.Channel('test-channel', 'Test Channel', firebase.notifications.Android.Importance.Max)
+            .setDescription('My apps test channel');
+
+        // Create the channel
+        firebase.notifications().android.createChannel(channel);
+
+        this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
+            // Process your notification as required
+            // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+        });
+
         /*
         * Triggered for data only payload in foreground
         * */
@@ -120,6 +232,53 @@ export default class HomeScreen extends React.Component {
             //process data message
             console.log(JSON.stringify(message));
         });
+
+        this.setState({status: "Notofications Initialized"})
+
+
+        // /*
+        // * Triggered when a particular notification has been received in foreground
+        // * */
+        //
+        // this.notificationListener = firebase.notifications().onNotification((notification) => {
+        //     // Process your notification as required
+        //     notification
+        //         .android.setChannelId('test-channel')
+        //         .android.setSmallIcon('ic_launcher')
+        //         .android.setPriority(firebase.notifications.Android.Priority.Max)
+        //         .setSound('default');
+        //     firebase.notifications()
+        //         .displayNotification(notification);
+        //
+        //     const { title, body } = notification;
+        //     this.showAlert(title, body);
+        // });
+        //
+        // /*
+        // * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
+        // * */
+        // this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+        //     const { title, body } = notificationOpen.notification;
+        //     this.showAlert(title, body);
+        // });
+        //
+        // /*
+        // * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
+        // * */
+        // const notificationOpen = await firebase.notifications().getInitialNotification();
+        // if (notificationOpen) {
+        //     const { title, body } = notificationOpen.notification;
+        //     this.showAlert(title, body);
+        // }
+        // /*
+        // * Triggered for data only payload in foreground
+        // * */
+        // this.messageListener = firebase.messaging().onMessage((message) => {
+        //     //process data message
+        //     console.log(JSON.stringify(message));
+        // });
+        //
+        // this.setState({status: "Notofications Initialized"})
     }
 
     showAlert(title, body) {

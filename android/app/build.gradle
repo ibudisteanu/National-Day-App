@@ -99,11 +99,11 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.romania100.competitionapp"
+        applicationId "com.romania100.competition"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 56
+        versionName "1.56"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -162,9 +162,12 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
 
     //Add these lines
-    implementation "com.google.android.gms:play-services-base:15.0.0"
-    implementation "com.google.firebase:firebase-core:15.0.2"
-    implementation "com.google.firebase:firebase-messaging:15.0.2"
+    implementation "com.google.android.gms:play-services-base:15.0.1"
+    implementation "com.google.firebase:firebase-core:16.0.1"
+    implementation "com.google.firebase:firebase-messaging:17.1.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+
+
 }
 
 // Run this once to be able to run the application with BUCK
