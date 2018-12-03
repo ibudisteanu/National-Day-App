@@ -23,6 +23,8 @@ export default class QuestionsScreen extends React.Component {
 
      this.state = {
 
+          lives: 3,
+
           timeout: undefined,
 
           error: '',
@@ -99,6 +101,10 @@ export default class QuestionsScreen extends React.Component {
             <View style={styles.resultContainer}>
                 { this.state.success==="" ? <Text style={styles.error}>{this.state.error}</Text> : <Text style={styles.success}>{this.state.success}</Text>}
             </View>
+
+            <Text  style={styles.remaining}>
+                Încercări rămase {this.state.lives}
+            </Text>
 
         </View>
      );
@@ -351,5 +357,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 16,
         marginTop: 20
+    },
+    remaining: {
+        textAlign: 'center',
+        
     }
 });

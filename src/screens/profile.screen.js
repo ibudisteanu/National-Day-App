@@ -40,7 +40,7 @@ export default class ProfileScreen extends React.Component {
   render() {
 
     return (
-        <Layout onNavigate={ ( page, params) => this.props.navigation.navigate(page, params) } >
+        <Layout onNavigate={ this.handleNavigate } >
 
             <View style={styles.container}>
 
@@ -88,10 +88,16 @@ export default class ProfileScreen extends React.Component {
 
    handleEmail = (text) => {
       this.setState({ email: text, error: "" })
-   }
+   };
    handleName = (text) => {
       this.setState({ name: text, error: "" })
-   }
+   };
+
+
+   validateEmail = (email) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+   };
 
    handleSave = async () => {
 
@@ -100,17 +106,22 @@ export default class ProfileScreen extends React.Component {
             return;
         }
 
+       if (this.validateEmail(this.state.email ) ){
+           this.setState({ error: "Adresa de email invalida" } );
+           return;
+       }
+
         await Storage.setName(this.state.name);
-        await Storage.setEmail(this.state.email)
+        await Storage.setEmail(this.state.email);
 
 
-        try{
+        try {
 
               let data = {
                   device:  await Storage.getDevice(),
                   name: this.state.name,
                   email: this.state.email,
-              }
+              };
 
               let answer = await fetch("http://webdollar-vps2.ddns.net:8084/ranking-update-device", {
                    method: 'POST',
@@ -122,6 +133,7 @@ export default class ProfileScreen extends React.Component {
                 if ( answer && answer.result ) {
 
                     this.setState({success: "Profilul tau s-a salvat cu success"})
+                    this.props.navigation.navigate('Home', {} )
 
                 } else
                     this.setState({success: "Profilul tau nu a fost salvat"} )
@@ -134,7 +146,7 @@ export default class ProfileScreen extends React.Component {
         }
 
 
-   }
+   };
 
    handleResetProfile = async () => {
 
@@ -152,6 +164,15 @@ export default class ProfileScreen extends React.Component {
         await Storage.setEmail('');
         await Storage.setQuestions([]);
         await Storage.setLastAnsweredQuestion(0);
+
+   };
+
+   handleNavigate = async ( page, params )=>{
+
+       if (await Storage.getEmail() === '')
+           return;
+
+       this.props.navigation.navigate(page, params)
 
    }
 
