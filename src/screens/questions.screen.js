@@ -25,6 +25,8 @@ export default class QuestionsScreen extends React.Component {
 
           lives: 3,
 
+          blocked: false,
+
           timeout: undefined,
 
           error: '',
@@ -263,11 +265,14 @@ export default class QuestionsScreen extends React.Component {
 
   async handleAnswer( answerOption ) {
 
+      if (this.state.blocked)
+          return;
+
       let url = "http://webdollar-vps2.ddns.net:8084/question-answer/"+await Storage.getDevice()+'/'+this.state.question._id+"/"+this.state.question.answers[answerOption];
 
       let answer = await fetch( url, {
         method: "GET",
-      })
+      });
 
       answer = await answer.json();
 
@@ -278,12 +283,14 @@ export default class QuestionsScreen extends React.Component {
               this.setState({
                 success: "Felicitari! Ai raspuns corect",
                 error: "",
-              })
+                blocked: true,
+              });
 
               setTimeout( async ()=>{
 
                   this.setState({
-                    lastAnsweredQuestion: this.state.question._id
+                    lastAnsweredQuestion: this.state.question._id,
+                      blocked: false,
                   });
 
                   await Storage.setLastAnsweredQuestion(this.state.lastAnsweredQuestion);
@@ -296,7 +303,12 @@ export default class QuestionsScreen extends React.Component {
               this.setState({
                 success: "",
                 error: "Raspuns Gresit!",
-              })
+                lives: this.state.lives-1,
+              });
+
+              if (this.state.lives === 0){
+                  this.finished();
+              }
 
           }
 
@@ -310,6 +322,10 @@ export default class QuestionsScreen extends React.Component {
 
       }
 
+  }
+
+  finished(){
+        
   }
 
 
