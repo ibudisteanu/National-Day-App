@@ -167,7 +167,36 @@ export default class QuestionsScreen extends React.Component {
 
    async downloadQuestions(){
 
+       try{
 
+           let url = "http://webdollar-vps2.ddns.net:8084/get-active-questions";
+
+           let answer = await fetch(url, {
+               method: "GET"
+           });
+
+           answer = await answer.json();
+
+           if (answer && answer.question){
+
+               if (this.state.question !== null && this.state.question._id === answer.question._id )
+                   return;
+
+               this.setState({
+                   questions: [
+                       answer.question,
+                   ],
+                   lives: 1,
+                   question: answer.question,
+                   total: 0,
+               });
+
+               return;
+           }
+
+       } catch (exception){
+
+       }
 
         try{
 
