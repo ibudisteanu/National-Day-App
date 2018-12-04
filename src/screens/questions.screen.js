@@ -9,7 +9,7 @@ import Storage from "./../storage";
 export default class QuestionsScreen extends React.Component {
 
   static navigationOptions = {
-      headerTitle: 'Întrebări',
+      headerTitle: 'Întrebări - Practică',
       headerTintColor: '#ffe500',
       headerStyle: {
           backgroundColor: '#002d72'
@@ -24,6 +24,7 @@ export default class QuestionsScreen extends React.Component {
      this.state = {
 
           lives: 3,
+          total: 0,
 
           blocked: false,
 
@@ -47,7 +48,8 @@ export default class QuestionsScreen extends React.Component {
 
   async componentDidMount(){
 
-      let questions = await Storage.getQuestions();
+      //let questions = await Storage.getQuestions();
+      let questions = [];
 
       this.setState({
         questions: questions,
@@ -88,9 +90,11 @@ export default class QuestionsScreen extends React.Component {
         <View>
 
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>
+
+                <Text style={styles.title} onPress={ ()=>this.handleTitleClick() }>
                     {this.state.question.title}
-                    </Text>
+                </Text>
+
             </View>
 
             <View style={styles.questionsContainer}>
@@ -142,15 +146,37 @@ export default class QuestionsScreen extends React.Component {
        )
    }
 
+   shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
+
    async downloadQuestions(){
+
+
 
         try{
 
-            let url = "http://webdollar-vps2.ddns.net:8084/new-questions/"+(this.state.lastAnsweredQuestion||'0');
+            //let url = "http://webdollar-vps2.ddns.net:8084/new-questions/"+(this.state.lastAnsweredQuestion||'0');
+            let url = "http://webdollar-vps2.ddns.net:8084/new-questions/0";
 
             let answer = await fetch(url, {
                 method: "GET"
-            })
+            });
 
 
             answer = await answer.json();
@@ -158,6 +184,8 @@ export default class QuestionsScreen extends React.Component {
             if (answer && answer.result){
 
                 answer = answer.message;
+
+                answer = this.shuffle(answer);
 
                 let newQuestions = this.state.questions;
                 for (let i=0; i< answer.length; i++){
@@ -268,7 +296,10 @@ export default class QuestionsScreen extends React.Component {
       if (this.state.blocked)
           return;
 
-      let url = "http://webdollar-vps2.ddns.net:8084/question-answer/"+await Storage.getDevice()+'/'+this.state.question._id+"/"+this.state.question.answers[answerOption];
+      if (this.state.lives.length === 0)
+          return;
+
+      let url = "http://webdollar-vps2.ddns.net:8084/question-answer/"+await Storage.getDevice()+'/'+this.state.question._id+"/"+this.state.question.answers[answerOption] ;
 
       let answer = await fetch( url, {
         method: "GET",
@@ -281,16 +312,17 @@ export default class QuestionsScreen extends React.Component {
           if (answer.result && answer.message === "Correct"){
 
               this.setState({
-                success: "Felicitari! Ai raspuns corect",
-                error: "",
-                blocked: true,
+                 success: "Felicitari! Ai raspuns corect",
+                 error: "",
+                 blocked: true,
+                 total: this.state.total+1
               });
 
               setTimeout( async ()=>{
 
                   this.setState({
-                    lastAnsweredQuestion: this.state.question._id,
-                      blocked: false,
+                     lastAnsweredQuestion: this.state.question._id,
+                     blocked: false,
                   });
 
                   await Storage.setLastAnsweredQuestion(this.state.lastAnsweredQuestion);
@@ -325,9 +357,30 @@ export default class QuestionsScreen extends React.Component {
   }
 
   finished(){
-        
+     this.setState({
+         question: {
+             title: "Ai răspuns corect doar la "+this.state.total+" din "+this.state.questions.length+". Începe din nou.",
+             answers: [],
+         },
+     });
   }
 
+  handleTitleClick(){
+
+      if (this.state.lives === 0){
+          this.setState({
+              lives: 3,
+              total: 0,
+              lastAnsweredQuestion: 0,
+              question: null,
+              blocked: false,
+              questions: this.shuffle(this.state.questions)
+          })
+
+          this.getNextQuestion();
+      }
+
+  }
 
 }
 

@@ -106,7 +106,7 @@ export default class ProfileScreen extends React.Component {
             return;
         }
 
-       if (this.validateEmail(this.state.email ) ){
+       if ( !this.validateEmail(this.state.email ) ){
            this.setState({ error: "Adresa de email invalida" } );
            return;
        }
