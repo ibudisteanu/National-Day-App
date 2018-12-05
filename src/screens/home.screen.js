@@ -175,13 +175,14 @@ export default class HomeScreen extends React.Component {
 
                 channel.setDescription("MyApp event controls");
                 channel.setShowBadge(false);
-                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+                //channel.setLockscreenVisibility(1) //Notification.VISIBILITY_PUBLIC);
 
                 // Create the channel
                 firebase.notifications().android.createChannel(channel);
 
-            } catch (err){
-
+            } catch (exception){
+                console.error(exception);
             }
 
             this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
@@ -196,6 +197,12 @@ export default class HomeScreen extends React.Component {
                 //process data message
                 console.log(JSON.stringify(message));
             });
+
+            try{
+                firebase.messaging().subscribeToTopic("allDevices");
+            } catch (exception){
+
+            }
 
 
             this.setState({status: "Notifications Initialized"})
