@@ -131,15 +131,19 @@ export default class HomeScreen extends React.Component {
                     .displayNotification(notification);
 
                 const { title, body } = notification;
-                this.showAlert(title, body);
+                this.props.navigation.navigate('Questions', {} )
+                //this.showAlert(title, body);
             });
 
             /*
             * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
             * */
             this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+
                 const { title, body } = notificationOpen.notification;
-                this.showAlert(title, body);
+                this.props.navigation.navigate('Questions', {} )
+                //this.showAlert(title, body);
+
             });
 
             /*
@@ -147,8 +151,10 @@ export default class HomeScreen extends React.Component {
             * */
             const notificationOpen = await firebase.notifications().getInitialNotification();
             if (notificationOpen) {
+
                 const { title, body } = notificationOpen.notification;
-                this.showAlert(title, body);
+                this.props.navigation.navigate('Questions', {} )
+                //this.showAlert(title, body);
             }
 
             try{

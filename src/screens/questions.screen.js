@@ -214,6 +214,7 @@ export default class QuestionsScreen extends React.Component {
         try{
 
             //let url = "http://webdollar-vps2.ddns.net:8084/new-questions/"+(this.state.lastAnsweredQuestion||'0');
+
             let url = "http://webdollar-vps2.ddns.net:8084/new-questions/0";
 
             let answer = await fetch(url, {
