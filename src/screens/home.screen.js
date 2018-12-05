@@ -60,8 +60,8 @@ export default class HomeScreen extends React.Component {
 
    async componentDidMount() {
 
-        await this.checkPermission();
-       await this.createNotificationListeners(); //add this line
+       this.checkPermission();
+       this.createNotificationListeners(); //add this line
 
         storage.getEmail().then((answer)=>{
 
@@ -135,8 +135,8 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000)
-                this.showAlert(title, body);
+                }, 3000);
+                //this.showAlert(title, body);
             });
 
             /*
@@ -148,8 +148,8 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000)
-                this.showAlert(title, body);
+                }, 3000);
+                //this.showAlert(title, body);
             });
 
             /*
@@ -163,8 +163,8 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000)
-                this.showAlert(title, body);
+                }, 3000);
+                //this.showAlert(title, body);
             }
 
             try{
