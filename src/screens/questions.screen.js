@@ -8,12 +8,16 @@ import Storage from "./../storage";
 
 export default class QuestionsScreen extends React.Component {
 
-  static navigationOptions = {
-      headerTitle: 'Întrebări - Practică',
-      headerTintColor: '#ffe500',
-      headerStyle: {
-          backgroundColor: '#002d72'
-      }
+
+  static navigationOptions = ({ navigation }) => {
+     const {state} = navigation;
+     return {
+        title: `${state.params.title ||"Întrebări - Practică" }`,
+        headerTintColor: '#ffe500',
+        headerStyle: {
+            backgroundColor: '#002d72'
+        }
+     };
   };
 
   constructor(props) {
@@ -38,10 +42,13 @@ export default class QuestionsScreen extends React.Component {
           questions: [],
           lastAnsweredQuestion: 0,
 
+          timeRemaining: 0,
+
           question: null,
+          prevQuestionCompetition: null,
 
           errorStatus: "",
-     }
+     };
 
 
   }
@@ -67,6 +74,23 @@ export default class QuestionsScreen extends React.Component {
     this.getNextQuestion();
 
     this.downloadQuestionsInterval()
+
+    this.setState({
+        timerClock: setInterval (()=>{
+
+            if (this.state.question === undefined || this.state.question === null)
+                return;
+
+            let timeRemaining = this.state.question.deadline - new Date().getTime();
+            if (timeRemaining < 0) timeRemaining = 0;
+
+            this.setState({
+                timeRemaining: timeRemaining
+            })
+
+        }, 1000)
+    })
+
 
   }
 
@@ -146,9 +170,8 @@ export default class QuestionsScreen extends React.Component {
 
     renderTimeRemaining(){
 
-       let timeRemaining = this.question.deadline - new Date().getTime();
         return(
-           <Text style={styles.timeRemanining}>{ timeRemaining > 0 ? timeRemaining : 0} </Text>
+           <Text style={styles.timeRemaining}>Timp rămas { Math.floor( this.state.timeRemaining /1000 / 60) }m { Math.floor( this.state.timeRemaining /1000 % 60 )} s </Text>
        )
     }
 
@@ -181,7 +204,7 @@ export default class QuestionsScreen extends React.Component {
 
        try{
 
-           let url = "http://webdollar-vps2.ddns.net:8084/get-active-questions";
+           let url = "http://webdollar-vps2.ddns.net:8084/get-active-question";
 
            let answer = await fetch(url, {
                method: "GET"
@@ -189,22 +212,37 @@ export default class QuestionsScreen extends React.Component {
 
            answer = await answer.json();
 
-           if (answer && answer.question){
+           if (answer && answer.question ){
 
-               if (this.state.question !== null && this.state.question._id === answer.question._id )
+
+               if ((this.state.prevQuestionCompetition === null) || (answer.question._id !== this.state.prevQuestionCompetition._id )){
+                   this.props.navigation.setParams( { title: 'Întrebări - Concurs' } );
+
+                   if (this.state.question !== null && this.state.question._id === answer.question._id )
+                       return;
+
+                   this.setState({
+                       questions: [
+                           answer.question,
+                       ],
+                       lives: 1,
+                       question: answer.question,
+                       prevQuestionCompetition: {
+                           title: answer.question.title,
+                           _id: answer.question._id,
+                       },
+                       total: 0,
+
+                   });
+
                    return;
+               } else
+                   this.setState({
+                       questions: [
 
-               this.setState({
-                   questions: [
-                       answer.question,
-                   ],
-                   lives: 1,
-                   question: answer.question,
-                   total: 0,
+                       ]
+                   })
 
-               });
-
-               return;
            }
 
        } catch (exception){
@@ -215,9 +253,11 @@ export default class QuestionsScreen extends React.Component {
 
             //let url = "http://webdollar-vps2.ddns.net:8084/new-questions/"+(this.state.lastAnsweredQuestion||'0');
 
+            this.props.navigation.setParams( { title: 'Întrebări - Practică' } );
+
             let url = "http://webdollar-vps2.ddns.net:8084/new-questions/0";
 
-            let answer = await fetch(url, {
+            let answer = await fetch( url, {
                 method: "GET"
             });
 
@@ -272,18 +312,31 @@ export default class QuestionsScreen extends React.Component {
 
    async downloadQuestionsInterval(){
 
-        if (this.state.timeout !== undefined) return;
+       this.setState({
+           timeout: undefined,
+       });
 
-        await this.downloadQuestions();
-        this.setState({
+       await this.downloadQuestions();
+
+       if (this.state.timeout) return;
+
+       this.setState({
 
             timeout: setTimeout( this.downloadQuestionsInterval.bind(this), 10000 )
 
-        });
+       });
 
     }
 
     componentWillUnmount(){
+
+       if (this.state.timerClock){
+           clearInterval(this.state.timerClock);
+
+           this.setState({
+               timerClock: undefined,
+           })
+       }
 
         if (this.state.timeout !== undefined){
 
@@ -406,11 +459,13 @@ export default class QuestionsScreen extends React.Component {
              answers: [],
          },
      });
+
   }
 
-  handleTitleClick(){
+  async handleTitleClick(){
 
       if (this.state.lives === 0){
+
           this.setState({
               lives: 3,
               total: 0,
@@ -418,8 +473,9 @@ export default class QuestionsScreen extends React.Component {
               question: null,
               blocked: false,
               questions: this.shuffle(this.state.questions)
-          })
+          });
 
+          await this.downloadQuestions();
           this.getNextQuestion();
       }
 

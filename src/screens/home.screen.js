@@ -208,8 +208,8 @@ export default class HomeScreen extends React.Component {
             this.setState({status: "Notifications Initialized"})
 
 
-        } catch(err){
-
+        } catch(exception){
+            console.error(exception)
         }
 
 
