@@ -38,6 +38,7 @@ export default class HomeScreen extends React.Component {
     const {navigate} = this.props.navigation;
 
     return (
+
         <Layout onNavigate={ ( page, params) => this.props.navigation.navigate(page, params) } >
 
             <View style={ styles.textView } >
@@ -49,7 +50,6 @@ export default class HomeScreen extends React.Component {
                     width={Dimensions.get('window').width} // height will be calculated automatically
                     source={require('./../../res/ribbon_2.png')}
                 />
-
 
             </View>
 
@@ -135,7 +135,8 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000);
+                }, 2000);
+
                 //this.showAlert(title, body);
             });
 
@@ -148,7 +149,7 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000);
+                }, 2000);
                 //this.showAlert(title, body);
             });
 
@@ -163,7 +164,7 @@ export default class HomeScreen extends React.Component {
 
                 setTimeout(()=>{
                     this.props.navigation.navigate('Questions', {} )
-                }, 3000);
+                }, 2000);
                 //this.showAlert(title, body);
             }
 
