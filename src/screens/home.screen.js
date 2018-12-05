@@ -58,9 +58,10 @@ export default class HomeScreen extends React.Component {
 
    }
 
-    async componentDidMount() {
+   async componentDidMount() {
+
         await this.checkPermission();
-        await this.createNotificationListeners(); //add this line
+       await this.createNotificationListeners(); //add this line
 
         storage.getEmail().then((answer)=>{
 
@@ -117,8 +118,8 @@ export default class HomeScreen extends React.Component {
         try{
 
             /*
-        * Triggered when a particular notification has been received in foreground
-        * */
+            * Triggered when a particular notification has been received in foreground
+            * */
 
             this.notificationListener = firebase.notifications().onNotification((notification) => {
                 // Process your notification as required
@@ -131,8 +132,11 @@ export default class HomeScreen extends React.Component {
                     .displayNotification(notification);
 
                 const { title, body } = notification;
-                this.props.navigation.navigate('Questions', {} )
-                //this.showAlert(title, body);
+
+                setTimeout(()=>{
+                    this.props.navigation.navigate('Questions', {} )
+                }, 3000)
+                this.showAlert(title, body);
             });
 
             /*
@@ -141,9 +145,11 @@ export default class HomeScreen extends React.Component {
             this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
 
                 const { title, body } = notificationOpen.notification;
-                this.props.navigation.navigate('Questions', {} )
-                //this.showAlert(title, body);
 
+                setTimeout(()=>{
+                    this.props.navigation.navigate('Questions', {} )
+                }, 3000)
+                this.showAlert(title, body);
             });
 
             /*
@@ -153,8 +159,12 @@ export default class HomeScreen extends React.Component {
             if (notificationOpen) {
 
                 const { title, body } = notificationOpen.notification;
-                this.props.navigation.navigate('Questions', {} )
-                //this.showAlert(title, body);
+
+
+                setTimeout(()=>{
+                    this.props.navigation.navigate('Questions', {} )
+                }, 3000)
+                this.showAlert(title, body);
             }
 
             try{
@@ -187,7 +197,7 @@ export default class HomeScreen extends React.Component {
             });
 
 
-            //this.setState({status: "Notifications Initialized"})
+            this.setState({status: "Notifications Initialized"})
 
 
         } catch(err){

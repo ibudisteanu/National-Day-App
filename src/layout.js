@@ -7,7 +7,7 @@ import { Input } from 'react-native-elements';
 import NavBar from "./nav-bar";
 
 
-export default class HomeScreen extends React.Component {
+export default class Layout extends React.Component {
 
   render() {
 

@@ -10,8 +10,6 @@ import QuestionsScreen from "./src/screens/questions.screen.js"
 import RankingsScreen from "./src/screens/rankings.screen.js"
 import ProfileScreen from "./src/screens/profile.screen.js"
 
-import {name as appName} from './app.json';
-
 
 const AppNavigator = createStackNavigator({
         Home: {screen: HomeScreen},
@@ -24,6 +22,8 @@ const AppNavigator = createStackNavigator({
 );
 
 const AppContainer = createAppContainer(AppNavigator);
+
+import {name as appName} from './app.json';
 
 // Current main application
 AppRegistry.registerComponent( appName, () => AppContainer);
