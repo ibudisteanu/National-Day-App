@@ -108,9 +108,7 @@ export default class QuestionsScreen extends React.Component {
                 { this.state.success==="" ? <Text style={styles.error}>{this.state.error}</Text> : <Text style={styles.success}>{this.state.success}</Text>}
             </View>
 
-            <Text  style={styles.remaining}>
-                Încercări rămase {this.state.lives}
-            </Text>
+            { ( this.state.question !== null && this.state.question.deadline ) ? this.renderTimeRemaining() : this.renderLivesRemaining() }
 
         </View>
      );
@@ -145,6 +143,20 @@ export default class QuestionsScreen extends React.Component {
            <Text style={styles.question} onPress={ () => this.handleAnswer(answer) }>{this.state.question.answers[answer]}</Text>
        )
    }
+
+    renderTimeRemaining(){
+
+       let timeRemaining = this.question.deadline - new Date().getTime();
+        return(
+           <Text style={styles.timeRemanining}>{ timeRemaining > 0 ? timeRemaining : 0} </Text>
+       )
+    }
+
+    renderLivesRemaining(){
+        return(
+            <Text  style={styles.livesRemaining}>Încercări rămase {this.state.lives}</Text>
+        )
+    }
 
    shuffle(array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
@@ -189,6 +201,7 @@ export default class QuestionsScreen extends React.Component {
                    lives: 1,
                    question: answer.question,
                    total: 0,
+
                });
 
                return;
@@ -237,7 +250,7 @@ export default class QuestionsScreen extends React.Component {
                 this.setState({
                     questions: newQuestions,
                     checkedServer: true,
-                })
+                });
 
                 await Storage.setQuestions( this.state.questions );
 
@@ -456,8 +469,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 20
     },
-    remaining: {
+    livesRemaining: {
         textAlign: 'center',
         
+    },
+    timeRemaining: {
+        textAlign: 'center',
+
     }
 });
