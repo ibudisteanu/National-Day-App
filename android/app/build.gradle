@@ -102,8 +102,8 @@ android {
         applicationId "com.romania100.competition"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 59
-        versionName "1.59"
+        versionCode 60
+        versionName "1.60"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
